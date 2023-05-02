@@ -12,10 +12,16 @@ syncBtn.addEventListener("click", async () => {
   try {
     const response = await axios.get("/sync");
     console.log(response.data);
-    for (link of response.data) {
+    if (response.data.length > 0) {
+      for (link of response.data) {
+        let div = document.createElement("p");
+        div.innerHTML = link;
+        div.classList.add("text-break");
+        list.appendChild(div);
+      }
+    } else {
       let div = document.createElement("p");
-      div.innerHTML = link;
-      div.classList.add("text-break");
+      div.innerHTML = "No Links found";
       list.appendChild(div);
     }
     card.classList.remove("visually-hidden");

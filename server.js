@@ -4,6 +4,7 @@ const express = require("express");
 const path = require("path");
 const axios = require("axios").default;
 const mondaySdk = require("monday-sdk-js");
+const serverless = require("serverless-http");
 
 const app = express();
 const monday = mondaySdk();
@@ -75,6 +76,10 @@ app.get("/sync", async (req, res) => {
   res.json(errors);
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+if (process.env.NODE_ENV === "development") {
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
+}
+
+module.exports.handler = serverless(app);
