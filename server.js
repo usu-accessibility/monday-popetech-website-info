@@ -4,17 +4,13 @@ const express = require("express");
 const path = require("path");
 const axios = require("axios").default;
 const mondaySdk = require("monday-sdk-js");
-const serverless = require("serverless-http");
 
 const app = express();
 const monday = mondaySdk();
-const PORT = 3000;
 
 monday.setToken(process.env.monday_key);
 
-app.use(express.static(path.join(__dirname, "public")));
-
-app.get("/", (req, res) => {
+app.get("/app", (req, res) => {
   res.sendFile(path.join(__dirname + "/views/index.html"));
 });
 
@@ -30,7 +26,7 @@ app.get("/sync", async (req, res) => {
           Authorization: `Bearer ${process.env.pope_tech_key}`,
         },
       });
-      for (item of response.data.data) {
+      for (let item of response.data.data) {
         const link = item.full_url;
         popeWebsiteData.push(link);
       }
@@ -55,7 +51,7 @@ app.get("/sync", async (req, res) => {
         }
       }
     }`);
-    for (item of response.data.boards[0].items) {
+    for (let item of response.data.boards[0].items) {
       const link = item.column_values[0].text;
       mondayWebsiteData.push(link);
     }
@@ -64,7 +60,7 @@ app.get("/sync", async (req, res) => {
   }
 
   let errors = [];
-  for (link of popeWebsiteData) {
+  for (let link of popeWebsiteData) {
     const exists = mondayWebsiteData.find((element) =>
       element.startsWith(link)
     );
@@ -76,10 +72,4 @@ app.get("/sync", async (req, res) => {
   res.json(errors);
 });
 
-if (process.env.NODE_ENV === "development") {
-  app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-  });
-}
-
-module.exports.handler = serverless(app);
+module.exports = app;
