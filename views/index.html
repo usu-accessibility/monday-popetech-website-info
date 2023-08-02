@@ -6,72 +6,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Popetech Monday Sync</title>
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
-      crossorigin="anonymous"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"
     />
   </head>
   <body>
-    <header class="container d-flex justify-content-center p-2 mb-4">
-      <h1>Popetech Monday Sync</h1>
-    </header>
-    <main class="container d-grid col-5 gap-4">
-      <button id="startSync" type="button" class="btn btn-primary btn-lg">
-        Start Sync
-      </button>
+    <main class="container">
+      <hgroup>
+        <h1>Popetech Monday Sync</h1>
+        <h3>
+          Allows user to view which links are in Popetech but, aren't saved or
+          active inside of monday.
+        </h3>
+      </hgroup>
 
-      <div id="card" class="card visually-hidden">
-        <div class="card-body">
-          <h4 class="card-title">Links Found</h4>
-          <h6 class="card-subtitle mb-4 text-body-secondary">
-            In Popetech but not in Monday
-          </h6>
-          <div id="list" class="d-grid gap-2"></div>
-        </div>
-      </div>
+      <article id="card">
+        <button id="startSync" type="button" aria-busy="false">
+          Start Sync
+        </button>
+        <div id="list"></div>
+      </article>
     </main>
     <script>
       const syncBtn = document.getElementById("startSync");
-      const card = document.getElementById("card");
+      // const card = document.getElementById("card");
       const list = document.getElementById("list");
 
+      function handleCopy(element) {
+        navigator.clipboard.writeText(element.getAttribute("link"));
+        element.setAttribute("data-tooltip", "Copied!");
+      }
+
       syncBtn.addEventListener("click", async () => {
-        syncBtn.classList.add("disabled");
-        syncBtn.innerHTML = `<div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
-          </div>`;
+        syncBtn.ariaBusy = "true";
+        syncBtn.textContent = "Loading...";
         list.innerHTML = "";
-        card.classList.add("visually-hidden");
         try {
-          const response = await axios.get("/prod/sync");
+          const response = await axios.get("/sync");
           console.log(response.data);
           if (response.data.length > 0) {
-            for (let link of response.data) {
-              let div = document.createElement("p");
-              div.innerHTML = link;
-              div.classList.add("text-break");
-              list.appendChild(div);
-            }
+            let table = document.createElement("table");
+            table.role = "grid";
+            table.innerHTML = `
+              <thead>
+                <tr>
+                  <th scope="col"><strong>#</strong></th>
+                  <th scope="col"><strong>Url</strong></th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+            `;
+            let tbody = document.createElement("tbody");
+            response.data.forEach((link, idx) => {
+              let tr = document.createElement("tr");
+              tr.innerHTML = `
+                <th scope="row">${idx + 1}</th>
+                <td><a href="${link}" target="_blank" >${link}</a></td>
+                <td><button onclick="handleCopy(this)" role="button" class="secondary outline" link="${link}" data-toolip="Click to copy" >Copy</button></td>
+              `;
+              tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            list.appendChild(table);
           } else {
-            let div = document.createElement("p");
-            div.innerHTML = "No Links found";
-            list.appendChild(div);
+            list.innerHTML = "<p>No links found.</p>";
           }
-          card.classList.remove("visually-hidden");
         } catch (err) {
           console.error(err);
+          list.innerHTML =
+            "<p>Something went wrong. Please check console and try again.</p>";
         } finally {
-          syncBtn.classList.remove("disabled");
-          syncBtn.innerHTML = "Start Sync";
+          syncBtn.ariaBusy = "false";
+          syncBtn.textContent = "Start Sync";
         }
       });
     </script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
-      crossorigin="anonymous"
-    ></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   </body>
 </html>
