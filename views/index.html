@@ -24,12 +24,13 @@
         <button id="startSync" type="button" aria-busy="false">
           Start Sync
         </button>
+        <p id="total"></p>
         <div id="list"></div>
       </article>
     </main>
     <script>
       const syncBtn = document.getElementById("startSync");
-      // const card = document.getElementById("card");
+      const total = document.getElementById("total");
       const list = document.getElementById("list");
 
       function handleCopy(element) {
@@ -41,6 +42,7 @@
         syncBtn.ariaBusy = "true";
         syncBtn.textContent = "Loading...";
         list.innerHTML = "";
+        total.innerHTML = "";
         try {
           const response = await axios.get("/sync");
           console.log(response.data);
@@ -66,6 +68,7 @@
               `;
               tbody.appendChild(tr);
             });
+            total.innerHTML = `<strong>Total:</strong> ${response.data.length}`;
             table.appendChild(tbody);
             list.appendChild(table);
           } else {

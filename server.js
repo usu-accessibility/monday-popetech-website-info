@@ -47,8 +47,10 @@ app.get("/sync", async (req, res) => {
   try {
     const response = await monday.api(`query {
       boards(ids: [2929644510]) {
-        groups(ids: ["1668548676_usu_websites___cano"]) {
-          items {
+        groups(
+          ids: ["1668548676_usu_websites___cano", "new_group67768", "new_group90586", "new_group23495"]
+        ) {
+          items(limit: 500) {
             column_values(ids: ["text4"]) {
               text
             }
@@ -56,34 +58,11 @@ app.get("/sync", async (req, res) => {
         }
       }
     }`);
-    for (let item of response.data.boards[0].groups[0].items) {
-      const link = item.column_values[0].text;
-      mondayWebsiteData.push(link);
-    }
-  } catch (err) {
-    console.error(err);
-  }
 
-  try {
-    const response = await monday.api(`query {
-      boards(ids: [2929644510]) {
-        groups(ids: ["new_group68585"]) {
-          items {
-            column_values(ids: ["text4"]) {
-              text
-            }
-          }
-        }
+    for (let group of response.data.boards[0].groups) {
+      for (let item of group.items) {
+        mondayWebsiteData.push(item.column_values[0].text);
       }
-    }`);
-    for (let item of response.data.boards[0].groups[0].items) {
-      const link = item.column_values[0].text;
-      unusedWebsitesData.push(link);
-    }
-    for (let link of unusedWebsitesData) {
-      const removed = popeWebsiteData.filter((item) => !link.startsWith(item));
-
-      popeWebsiteData = removed;
     }
   } catch (err) {
     console.error(err);
