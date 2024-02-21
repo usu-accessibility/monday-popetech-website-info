@@ -1,7 +1,7 @@
 require("dotenv").config();
 
-const express = require("express");
 const path = require("path");
+const express = require("express");
 const axios = require("axios").default;
 const mondaySdk = require("monday-sdk-js");
 
@@ -10,9 +10,9 @@ const monday = mondaySdk();
 
 monday.setToken(process.env.monday_key);
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use("/static", express.static("public"));
 
-app.get("/app", (req, res) => {
+app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "/views/index.html"));
 });
 
@@ -21,7 +21,6 @@ app.get("/sync", async (req, res) => {
   let link = "https://api.pope.tech/organizations/usu/websites?limit=250";
   let popeWebsiteData = [];
   let mondayWebsiteData = [];
-  let unusedWebsitesData = [];
   while (!done) {
     try {
       const response = await axios.get(link, {
@@ -45,14 +44,16 @@ app.get("/sync", async (req, res) => {
     }
   }
   try {
-    const response = await monday.api(`query {
+    const response = await monday.api(`{
       boards(ids: [2929644510]) {
         groups(
           ids: ["1668548676_usu_websites___cano", "new_group67768", "new_group90586", "new_group23495"]
         ) {
-          items(limit: 500) {
-            column_values(ids: ["text4"]) {
-              text
+          items_page(limit: 500) {
+            items {
+              column_values(ids: ["text4"]) {
+                text
+              }
             }
           }
         }
@@ -60,7 +61,7 @@ app.get("/sync", async (req, res) => {
     }`);
 
     for (let group of response.data.boards[0].groups) {
-      for (let item of group.items) {
+      for (let item of group.items_page.items) {
         mondayWebsiteData.push(item.column_values[0].text);
       }
     }
@@ -79,6 +80,10 @@ app.get("/sync", async (req, res) => {
   }
 
   res.json(errors);
+});
+
+app.use("*", (req, res) => {
+  res.redirect("/");
 });
 
 module.exports = app;

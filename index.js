@@ -1,7 +1,6 @@
-const awsServerlessExpress = require("aws-serverless-express");
 const app = require("./server");
-const server = awsServerlessExpress.createServer(app);
+const PORT = 3000;
 
-exports.handler = (event, context) => {
-  awsServerlessExpress.proxy(server, event, context);
-};
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
