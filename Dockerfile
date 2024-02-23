@@ -8,8 +8,8 @@ RUN npm i
 
 COPY . .
 
-ENV PORT=3000
+ENV PORT=3011
 
-EXPOSE 3000
+EXPOSE 3011
 
 CMD [ "npm", "run", "prod" ]
