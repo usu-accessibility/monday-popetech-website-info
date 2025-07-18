@@ -22,7 +22,7 @@ syncBtn.addEventListener("click", async () => {
           <tr>
             <th scope="col"><strong>#</strong></th>
             <th scope="col"><strong>Url</strong></th>
-            <th scope="col"></th>
+            <th scope="col">Copy Link</th>
           </tr>
         </thead>
       `;

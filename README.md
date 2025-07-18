@@ -1,40 +1,32 @@
 # Monday Popetech Website Info
 
-A web interface that checks for discrepancies between websites added to Popetech and websites added to the USU Websites Monday.com board.
+[A web interface](https://monday-popetech-website-info.accessapps.link/) that checks for discrepancies between websites added to Popetech and websites added to the [USU Websites Monday.com board](https://usu.monday.com/boards/2929644510). Hosted [on Coolify](https://app.coolify.io/project/dg48408).
 
 ## Installation
 
 1. Clone repository.
 2. Run `npm install` in the root directory.
-3. Create a `.env` file in the root directory.
-4. Add required environment variables to `.env` file.
-5. Run `npm run dev`
+3. Create a `.env` file in the root directory, structured like [the env example file](/.env.example), and fill it with the required values.
+4. Run `npm run dev` in the root directory.
 
 ## How it Works
 
-1. A user navigates to web interface and clicks start sync.
-2. A request is sent back to the server.
-3. All websites are pulled from Popetech.
-4. All websites are pulled from Monday.com.
-5. If a link from Popetech is in Monday.com then it is correct otherwise that link is saved in a error list.
-6. List of errors is sent back to web interface.
-7. List is rendered in a table for easy viewing.
+1. A user navigates to web interface and clicks start sync, which sends a request to the server.
+2. All websites are pulled from Popetech.
+3. All websites are pulled from Monday.com.
+4. If a link from Popetech is in Monday.com then it is correct. Otherwise, that link is saved in a error list.
+5. List of errors is sent back to web interface, and rendered in a table for easy viewing.
 
 ## Environment Variables
 
-### Production
+### Production / Development
 
-1. `monday_key`: API Token used to authenticate with Monday.com services.
-2. `pope_tech_key`: API Token used to authenticate with Popetech services.
-
-### Development
-
-1. `monday_key`: API Token used to authenticate with Monday.com services.
-2. `pope_tech_key`: API Token used to authenticate with Popetech services.
+- `monday_key`: API Token used to authenticate with Monday.com services.
+- `pope_tech_key`: API Token used to authenticate with Popetech services.
 
 ### Optional
 
-1. `PORT`: The number that the application will be available on.
+- `PORT`: The number that the application will be available on.
 
 ## Version
 
