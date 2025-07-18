@@ -82,7 +82,9 @@ app.get("/sync", async (req, res) => {
   res.json(errors);
 });
 
-app.use("*", (req, res) => {
+// When updating dependencies, I had the error decribed below, originating from 'express'. Changing "*" to the /(.*)/ regex was the recommended fix.
+// https://stackoverflow.com/questions/78973586/typeerror-invalid-token-at-1-https-git-new-pathtoregexperror
+app.use(/(.*)/, (req, res) => {
   res.redirect("/");
 });
 
