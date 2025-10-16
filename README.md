@@ -18,15 +18,7 @@
 5. List of errors is sent back to web interface, and rendered in a table for easy viewing.
 
 ## Environment Variables
-
-### Production / Development
-
-- `monday_key`: API Token used to authenticate with Monday.com services.
-- `pope_tech_key`: API Token used to authenticate with Popetech services.
-
-### Optional
-
-- `PORT`: The number that the application will be available on.
+See the [.env.example](/.env.example)
 
 ## Version
 
